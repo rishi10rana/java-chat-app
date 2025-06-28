@@ -1,19 +1,25 @@
 package com.rishi.chatapp.views;
 
 
-import javax.swing.JFrame;
 import java.awt.Color;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import com.rishi.chatapp.dao.UserDAO;
+import com.rishi.chatapp.dto.UserDTO;
 
 public class UserScreen extends JFrame{
 
 	private JFrame frame;
-	private JTextField textField;
+	private JTextField useridtxt;
 	private JPasswordField passwordField;
 
 	/**
@@ -23,6 +29,20 @@ public class UserScreen extends JFrame{
 		UserScreen window = new UserScreen();
 		
 	}
+	
+	
+	private void register() {
+		String userid = useridtxt.getText();
+		char[] password = passwordField.getPassword(); // to handle password securely
+		
+		UserDAO userDAO = new UserDAO();
+		UserDTO userDTO = new UserDTO(userid, password);
+		
+		int result = userDAO.add(userDTO);
+		
+//		System.out.print("User Id: " + userid + " Password: " + password.toString()); // ClassName@HashCode(Hexadecimal)
+	}
+	
 
 	/**
 	 * Create the application.
@@ -31,10 +51,11 @@ public class UserScreen extends JFrame{
 		// JFrame Properties
 		setTitle("Login");
 		setResizable(false);
-		setBounds(100, 100, 578, 362);
+		setSize(578, 362);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setBackground(new Color(255, 255, 255));
 		getContentPane().setLayout(null);
+		setLocationRelativeTo(null);
 		
 		// Top Heading Label
 		JLabel lblNewLabel = new JLabel("LOGIN");
@@ -44,10 +65,10 @@ public class UserScreen extends JFrame{
 		getContentPane().add(lblNewLabel);
 		
 		// Textfield for Username
-		textField = new JTextField();
-		textField.setBounds(127, 90, 322, 31);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		useridtxt = new JTextField();
+		useridtxt.setBounds(127, 90, 322, 31);
+		getContentPane().add(useridtxt);
+		useridtxt.setColumns(10);
 		
 		// Label for Username
 		JLabel useridlbl = new JLabel("User ID :");
@@ -74,6 +95,12 @@ public class UserScreen extends JFrame{
 		
 		// Register Button
 		JButton registerbt = new JButton("Register");
+		registerbt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				register();
+			}
+		});
 		registerbt.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		registerbt.setBounds(299, 233, 98, 23);
 		getContentPane().add(registerbt);

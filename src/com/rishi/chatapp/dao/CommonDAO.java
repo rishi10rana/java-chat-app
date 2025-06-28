@@ -5,8 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import static com.rishi.chatapp.utils.ConfigReader.getValue;
 
-public class CommonDAO {
-	public Connection createConnection() throws ClassNotFoundException, SQLException {
+// Theow Early and Catch Later to tell at User Level if any Exception Encountered
+public interface CommonDAO {
+	public static Connection createConnection() throws ClassNotFoundException, SQLException {
 		// Step - Load the Driver Class
 		Class.forName(getValue("DRIVER"));
 
@@ -21,10 +22,5 @@ public class CommonDAO {
 			con.close();
 		}
 		return null;
-	}
-
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		CommonDAO commonDAO = new CommonDAO();
-		commonDAO.createConnection();
 	}
 }
