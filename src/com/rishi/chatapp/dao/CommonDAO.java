@@ -19,8 +19,7 @@ public interface CommonDAO {
 		
 		if(con!=null){
 			System.out.println("Connection Created...");
-			con.close();
 		}
-		return null;
+		return con;
 	}
 }

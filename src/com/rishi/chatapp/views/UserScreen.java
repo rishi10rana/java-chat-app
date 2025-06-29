@@ -5,16 +5,20 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com.rishi.chatapp.dao.UserDAO;
 import com.rishi.chatapp.dto.UserDTO;
+import com.rishi.chatapp.utils.UserInfo;
 
 public class UserScreen extends JFrame{
 
@@ -30,15 +34,62 @@ public class UserScreen extends JFrame{
 		
 	}
 	
+	UserDAO userDAO = new UserDAO();
+	
+	private void doLogin() {
+		String userid = useridtxt.getText();
+		char[] password = passwordField.getPassword(); // to handle password securely
+		
+//		UserDAO userDAO = new UserDAO();
+		UserDTO userDTO = new UserDTO(userid, password);
+		try {
+			String message = "";
+			if(userDAO.isLogin(userDTO)) {
+				message = "Welcome " + userid;
+				UserInfo.USER_NAME = userid;
+				JOptionPane.showMessageDialog(this, message);
+				setVisible(false);
+				dispose(); // this closes the current window
+				
+				DashBoard dashBoard = new DashBoard(message);
+				dashBoard.setVisible(true);
+			}
+			else {
+				message = "Invalid UserID or Password !";
+				JOptionPane.showMessageDialog(this, message);
+			}
+		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	private void register() {
 		String userid = useridtxt.getText();
 		char[] password = passwordField.getPassword(); // to handle password securely
 		
-		UserDAO userDAO = new UserDAO();
+//		UserDAO userDAO = new UserDAO();
 		UserDTO userDTO = new UserDTO(userid, password);
 		
-		int result = userDAO.add(userDTO);
+		try {
+			int result = userDAO.add(userDTO);
+			if(result > 0) {
+				JOptionPane.showMessageDialog(this, "User Registered Successfully :)");
+//				System.out.println("Record Added Successfully...");
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "User Registeration Failed :(");
+//				System.out.println("Record Not Added :(");
+			}
+		}
+		catch(ClassNotFoundException | SQLException ex) {
+			System.out.println("DB Issue ...");
+			ex.printStackTrace();
+		}
+		catch(Exception ex) {
+			System.out.println("Some Generic Exception Raised ...");
+			ex.printStackTrace();
+		}
 		
 //		System.out.print("User Id: " + userid + " Password: " + password.toString()); // ClassName@HashCode(Hexadecimal)
 	}
@@ -89,6 +140,12 @@ public class UserScreen extends JFrame{
 		
 		// Login Button
 		JButton loginbt = new JButton("Login");
+		loginbt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				doLogin();
+			}
+		});
 		loginbt.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		loginbt.setBounds(181, 233, 98, 23);
 		getContentPane().add(loginbt);
